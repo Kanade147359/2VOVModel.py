@@ -72,23 +72,26 @@ def generate_initial_velocities(N, direction='right'):
 
 
 
+def main():
+    # シミュレーションの設定
+    simulations = [
+        {"name": "reflective", "boundary_condition": "periodic", "direction": "right"},
+        # {"name": "towards_center", "boundary_condition": "reflective", "direction": "center"},
+        # {"name": "periodic_random", "boundary_condition": "periodic", "direction": "random"}
+    ]
 
-# シミュレーションの設定
-simulations = [
-    {"name": "reflective", "boundary_condition": "periodic", "direction": "right"},
-    # {"name": "towards_center", "boundary_condition": "reflective", "direction": "center"},
-    # {"name": "periodic_random", "boundary_condition": "periodic", "direction": "random"}
-]
+    np.random.seed(0)
 
-np.random.seed(0)
+    # 複数のシミュレーションを実行
+    for i, sim in enumerate(simulations):
+        if sim["name"] == "reflective":
+            positions = generate_initial_positions_reflection(N, L, position_noise_strength)
+        elif sim["name"] == "towards_center":
+            positions = generate_initial_positions_around_perimeter(N, L)
+        velocities = generate_initial_velocities(len(positions), sim["direction"])
+        accelerations = np.zeros((len(positions), 2))
+        filename = f'simulation_{sim["name"]}_{i}'
+        run_simulation(positions, velocities, accelerations, distance_threshold, steps, dt, a, c, filename, sim["boundary_condition"])
 
-# 複数のシミュレーションを実行
-for i, sim in enumerate(simulations):
-    if sim["name"] == "reflective":
-        positions = generate_initial_positions_reflection(N, L, position_noise_strength)
-    elif sim["name"] == "towards_center":
-        positions = generate_initial_positions_around_perimeter(N, L)
-    velocities = generate_initial_velocities(len(positions), sim["direction"])
-    accelerations = np.zeros((len(positions), 2))
-    filename = f'simulation_{sim["name"]}_{i}'
-    run_simulation(positions, velocities, accelerations, distance_threshold, steps, dt, a, c, filename, sim["boundary_condition"])
+if __name__ == '__main__':
+    main()
