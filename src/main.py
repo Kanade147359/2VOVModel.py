@@ -1,19 +1,9 @@
 import numpy as np
 from simulation import run_simulation
 
-# 定数
-L = 100  # 正方形の一辺の長さ
-N = 10   # 粒子の数
-position_noise_strength = 0.1  # ノイズの強さ
-velocity_noise_strength = 0.1  # ノイズの強さ
-steps = 1000
-dt = 0.005
-distance_threshold = 2.0
-a = 1.0
-c = 1.0
-
-def generate_initial_positions_around_perimeter(N, L):
+def generate_initial_positions_around_perimeter(N, Lx, Ly):
     positions = np.zeros((N, 2))
+
     side_points = N // 4
     points_per_side = np.linspace(0, L, side_points, endpoint=False)
     
@@ -33,10 +23,10 @@ def generate_initial_positions_around_perimeter(N, L):
     positions[3*side_points:, 0] = 0
     positions[3*side_points:, 1] = points_per_side[::-1]
     
-    return positions
+    return positions, 
 
 # 初期位置の生成関数
-def generate_initial_positions_reflection(N,  L, noise_strength):
+def generate_initial_positions_reflection(N, noise_strength):
     positions = np.zeros((N * N, 2))
     sqrt3 = np.sqrt(3)
     
@@ -53,7 +43,7 @@ def generate_initial_positions_reflection(N,  L, noise_strength):
     return positions
 
 # 初期速度の設定関数
-def generate_initial_velocities(N, direction='right'):
+def generate_initial_velocities(N,velocity_noise_strength, direction='right'):
     velocities = np.zeros((N, 2))
     if direction == 'right':
         velocities[:, 0] = 5.0  # すべての粒子が右方向に移動
@@ -73,6 +63,20 @@ def generate_initial_velocities(N, direction='right'):
 
 
 def main():
+    lattice_constant = 2.0
+    # 定数
+    Ly = 100
+      # 正方形の一辺の長さ
+    Lx = np.sqrt(3) * Ly 
+    N = 10   # 粒子の数
+    position_noise_strength = 0.1  # ノイズの強さ
+    velocity_noise_strength = 0.1  # ノイズの強さ
+    steps = 1000
+    dt = 0.005
+    distance_threshold = 2.0
+    a = 1.0
+    c = 1.0
+
     # シミュレーションの設定
     simulations = [
         {"name": "reflective", "boundary_condition": "periodic", "direction": "right"},
@@ -85,10 +89,10 @@ def main():
     # 複数のシミュレーションを実行
     for i, sim in enumerate(simulations):
         if sim["name"] == "reflective":
-            positions = generate_initial_positions_reflection(N, L, position_noise_strength)
+            positions = generate_initial_positions_reflection(N, position_noise_strength)
         elif sim["name"] == "towards_center":
-            positions = generate_initial_positions_around_perimeter(N, L)
-        velocities = generate_initial_velocities(len(positions), sim["direction"])
+            positions = generate_initial_positions_around_perimeter(N, Lx, Ly)
+        velocities = generate_initial_velocities(len(positions),velocity_noise_strength, sim["direction"])
         accelerations = np.zeros((len(positions), 2))
         filename = f'simulation_{sim["name"]}_{i}'
         run_simulation(positions, velocities, accelerations, distance_threshold, steps, dt, a, c, filename, sim["boundary_condition"])
