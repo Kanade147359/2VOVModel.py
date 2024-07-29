@@ -31,6 +31,7 @@ def run_simulation(positions, velocities, accelerations, distance_threshold, ste
             positions = positions % 100  # x方向とy方向の両方で周期境界条件を適用
 
         if step % 100 == 0:
+            print(positions[0])
             plt.figure(figsize=(6, 6))
             plt.xlim(0, 100)
             plt.ylim(0, 100)

@@ -6,7 +6,7 @@ L = 100  # 正方形の一辺の長さ
 N = 10   # 粒子の数
 position_noise_strength = 0.1  # ノイズの強さ
 velocity_noise_strength = 0.1  # ノイズの強さ
-steps = 10000
+steps = 1000
 dt = 0.005
 distance_threshold = 2.0
 a = 1.0
@@ -79,6 +79,8 @@ simulations = [
     # {"name": "towards_center", "boundary_condition": "reflective", "direction": "center"},
     # {"name": "periodic_random", "boundary_condition": "periodic", "direction": "random"}
 ]
+
+np.random.seed(0)
 
 # 複数のシミュレーションを実行
 for i, sim in enumerate(simulations):
